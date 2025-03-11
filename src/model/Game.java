@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package teistris;
+package model;
 
+import view.MainWindow;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,12 +34,12 @@ public class Game {
     /**
      * Constante que define o valor máximo da coordenada x no panel de cadrados
      */
-    public final static int MAX_X = 160;
+    public final static int MAX_X = 240;
 
     /**
      * Constante que define o valor máximo da coordenada y no panel de cadrados
      */
-    public final static int MAX_Y = 200;
+    public final static int MAX_Y = 300;
 
     /**
      * Referenza á peza actual do xogo, que é a única que se pode mover
@@ -181,7 +182,16 @@ public class Game {
      * Crea unha nova peza e a establece como peza actual do xogo
      */
     private void createNewPiece() {
-        currentPiece = new Piece(this);
+        int pieceType = new java.util.Random().nextInt(4);
+        if (pieceType == 0) {
+            currentPiece = new SquarePiece(this);
+        } else if (pieceType == 1) {
+            currentPiece = new LPiece(this);
+        } else if (pieceType == 2) {
+            currentPiece = new BarPiece(this);
+        } else if (pieceType == 3) {
+            currentPiece = new TPiece(this);
+        }
     }
 
     /**
@@ -224,6 +234,7 @@ public class Game {
             if (isComplete) {
                 this.deleteLine(y);
                 numberOfLines++; //Pasamos a la siguiente linea
+                mainWindow.showNumberOfLines(numberOfLines);
             }
 
         }
@@ -240,10 +251,10 @@ public class Game {
         // Eliminamos todos os cadrados da liña especificada
         for (int x = 0; x < MAX_X; x += SQUARE_SIDE) {
             String key = x + "," + y;
+            Square sq = groundSquares.get(key);
+            this.mainWindow.deleteSquare(sq.getLblSquare());
             groundSquares.remove(key);
-            
         }
-
         // Baixamos todos os cadrados situados por enriba da liña borrada
         for (int currentY = y - SQUARE_SIDE; currentY >= 0; currentY -= SQUARE_SIDE) {
             for (int x = 0; x < MAX_X; x += SQUARE_SIDE) {

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package teistris;
+package model;
 
 import java.awt.Color;
 
@@ -23,17 +23,17 @@ import java.awt.Color;
  *
  * @author Profe de Programación
  */
-public class Piece {
+public abstract class Piece{
 
     /**
      * Referenza ao obxecto xogo
      */
-    private Game game;
+    protected Game game;
 
     /**
      * Referenzas aos catro cadrados que forman a peza
      */
-    private Square[] squares;
+    protected Square[] squares;
 
     public Game getGame() {
         return game;
@@ -58,19 +58,13 @@ public class Piece {
      */
     public Piece(Game game) {  
         this.game = game;
-        this.squares = new Square[4]; //Inicialización del array
-        //Creación de los cuadrados y posicion
-        squares[0] = new Square(Game.MAX_X / 2 - Game.SQUARE_SIDE, 0, Color.BLUE, game);
-        squares[1] = new Square(Game.MAX_X / 2, 0, Color.BLUE, game);
-        squares[2] = new Square(Game.MAX_X / 2 - Game.SQUARE_SIDE, Game.SQUARE_SIDE, Color.BLUE, game);
-        squares[3] = new Square(Game.MAX_X / 2, Game.SQUARE_SIDE, Color.BLUE, game);
     }
     
     
 
     /**
      * Metodo para mover la ficha a la derecha
-     * 
+     *
      * Verifica todos los cuadrados de la ficha se pueden mover a la derecha, y si puede mueve todos los cuadrados
      */
     public void moveRight() {
@@ -88,7 +82,7 @@ public class Piece {
 
     /**
      * Metodo para mover la ficha a la izquieda
-     * 
+     *
      * Verifica todos los cuadrados de la ficha se pueden mover a la izquierda, y si puede mueve todos los cuadrados
      */
     public void moveLeft() {
@@ -107,7 +101,7 @@ public class Piece {
      * Move a ficha a abaixo se é posible
      *
      * Verifica todos los cuadrados de la ficha se pueden mover hacia abajo, y si puede mueve todos los cuadrados
-     * @return 
+     * @return
      */
     public boolean moveDown() {
         
@@ -131,8 +125,36 @@ public class Piece {
      * @return true se o movemento da ficha é posible, se non false
      */
     public boolean rotate() {
-        // A rotación da ficha cadrada non supón ningunha variación na ficha,
-        // por iso simplemente devolvemos true
+        //Seleccionamos o cadrado donde pivotar a peza
+        Square pivot = squares[1];
+        //Array temporal das novas posicions
+        int[][] newPositions = new int[4][2];
+
+        for (int i = 0; i < squares.length; i++) {
+            int relativeX = squares[i].getX() - pivot.getX();
+            int relativeY = squares[i].getY() - pivot.getY();
+
+            //Rotación
+            int newX = -relativeY + pivot.getX();
+            int newY = relativeX + pivot.getY();
+
+            //Gardamos a posición
+            newPositions[i][0] = newX;
+            newPositions[i][1] = newY;
+        }
+
+        //Verificamos si la rotación es válida
+        for (int i = 0; i < newPositions.length; i++) {
+            if (!game.isValidPosition(newPositions[i][0], newPositions[i][1])) {
+                return false;
+            }
+        }
+            for (int i = 0; i < squares.length; i++) {
+                squares[i].setX(newPositions[i][0]);
+                squares[i].setY(newPositions[i][1]);
+            }
+        
+
         return true;
     }
 
