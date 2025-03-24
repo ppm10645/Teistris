@@ -38,9 +38,44 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener, Ke
      */
     public MainWindow() {
         initComponents();
-        KeyboardFocusManager manager
-                = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-        manager.addKeyEventDispatcher(this);
+//        KeyboardFocusManager manager
+//                = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+//        manager.addKeyEventDispatcher(this);
+
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(evt -> {
+            if (evt.getID() == KeyEvent.KEY_PRESSED) {
+
+                // indicamos que fai cada tecla
+                switch (evt.getKeyCode()) {
+                    // Rotar peza con control
+                    case KeyEvent.VK_UP:
+                        if (game != null) {
+                            game.rotatePiece();
+                        }
+                        break;
+                    // Mover para abaixo
+                    case KeyEvent.VK_DOWN:
+                        if (game != null) {
+                            game.movePieceDown();
+                        }
+                        break;
+                    // Mover para a esquerda
+                    case KeyEvent.VK_LEFT:
+                        if (game != null) {
+                            game.movePieceLeft();
+                        }
+                        break;
+                    // Mover para a dereita
+                    case KeyEvent.VK_RIGHT:
+                        if (game != null) {
+                            game.movePieceRight();
+                        }
+                        break;
+                }
+            }
+            return false; // Para que otros componentes también reciban eventos de teclado
+        });
+
     }
 
     private Game game = null; // Referenza ao obxecto do xogo actual
@@ -48,7 +83,8 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener, Ke
     private final int initialDelay = 1000;
     private Timer timer = new Timer(initialDelay, this); //Timer para indicar os ticks do game
 
-    private final int linesThreshold = 1; //Numero de liñas necesarias para aumentar a velocidade de baixada
+    private static final int LINES_THRESHOLD = 10; //Numero de liñas necesarias para aumentar a velocidade de baixada
+    
 
     private boolean gamePaused = false;
 
@@ -81,7 +117,7 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener, Ke
         lblNumberOfLines.setText(String.valueOf(numberOfLines));
 
         //Verificación para comprobar se alcanzou o limite de liñas para aumentar a dificuldade 
-        if (numberOfLines % linesThreshold == 0) {
+        if (numberOfLines % LINES_THRESHOLD == 0) {
             int currentDelay = timer.getDelay();//Obten o timer actual
             int newDelay = currentDelay / 2;//Reduce a metade o contador
             timer.setDelay(newDelay);//Acutaliza o timer
@@ -93,6 +129,7 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener, Ke
      */
     public void showGameOver() {
         game = null;
+        timer.stop();
         JOptionPane.showMessageDialog(this, "Fin do xogo");
 
     }
@@ -396,7 +433,7 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener, Ke
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent e) {
-        System.out.println( "typed" + e.getKeyCode() );
+        System.out.println("typed" + e.getKeyCode());
         if (e.getKeyChar() == 'a') {
             game.movePieceLeft();
         }

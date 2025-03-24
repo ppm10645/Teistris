@@ -117,6 +117,7 @@ public class Game {
         this.mainWindow = mainWindow;
         this.createNewPiece();
         this.groundSquares = new HashMap<>();
+        
     }
 
     /**
@@ -182,15 +183,28 @@ public class Game {
      * Crea unha nova peza e a establece como peza actual do xogo
      */
     private void createNewPiece() {
-        int pieceType = new java.util.Random().nextInt(4);
-        if (pieceType == 0) {
-            currentPiece = new SquarePiece(this);
-        } else if (pieceType == 1) {
-            currentPiece = new LPiece(this);
-        } else if (pieceType == 2) {
-            currentPiece = new BarPiece(this);
-        } else if (pieceType == 3) {
-            currentPiece = new TPiece(this);
+        int pieceType = new java.util.Random().nextInt(6);
+        switch (pieceType) {
+            case 0:
+                currentPiece = new SquarePiece(this);
+                break;
+            case 1:
+                currentPiece = new LPiece(this);
+                break;
+            case 2:
+                currentPiece = new BarPiece(this);
+                break;
+            case 3:
+                currentPiece = new TPiece(this);
+                break;
+            case 4:
+                currentPiece = new LargePiece(this);
+                break;
+            case 5:
+                currentPiece = new MiniLPiece(this);
+                break;
+            default:
+                break;
         }
     }
 
